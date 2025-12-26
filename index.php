@@ -36,12 +36,12 @@ function isActiveForm($formName, $activeForm)
     <h1>SQL INJECTION DEMO </h1>
     <div class="container">
         <div class="form-box <?= isActiveForm('login', $activeForm); ?>" id="login-form">
-         
+
             <form action="login_register.php" method="post">
                 <h2>Login</h2>
                 <?= showError($errors['login']); ?>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
+                <input type="text" name="name" placeholder="Name">
+                <input type="password" name="password" placeholder="Password">
                 <button type="submit" name="login">Login</button>
                 <p>Don't have an account? <a href="#" onclick="showForm('register-form')">Register</a></p>
             </form>

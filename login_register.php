@@ -20,11 +20,11 @@ if (isset($_POST['register'])) {
 }
 
 if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $name = $_POST['name'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    $result = $conn->query("SELECT * FROM users WHERE email = '$email'");
-    if ($result->num_rows > 0) {
+    $result = $conn->query("SELECT * FROM users WHERE name = '$name'");
+    if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['name'] = $user['name'];
@@ -40,11 +40,8 @@ if (isset($_POST['login'])) {
         }
     }
 
-    $_SESSION['login_error'] = 'Incorrect email or password';
+    $_SESSION['login_error'] = 'Incorrect name or password';
     $_SESSION['active_form'] = 'login';
     header("Location: index.php");
     exit();
 }
-
-
-
