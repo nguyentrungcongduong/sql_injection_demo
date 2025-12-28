@@ -5,6 +5,27 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+// Query database an toàn
+require_once 'config.php'; // Kết nối DB
+// $email = $_SESSION['email'];
+// $stmt = $conn->prepare("SELECT name, email, role FROM users WHERE email = ?");
+// $stmt->bind_param("s", $email);
+// $stmt->execute();
+
+$email = $_SESSION['email'];
+// $query = "SELECT name, email, role FROM users WHERE email = '$email'";
+$query = "SELECT name, email, role FROM users";
+$result = $conn->query($query);
+
+// if ($result && $result->num_rows > 0) {
+//     $row = $result->fetch_assoc();
+// } else {
+//     $row = null;
+// }
+
+
+// $result = $stmt->get_result();
+// $row = $result->fetch_assoc();
 ?>
 
 
@@ -16,6 +37,42 @@ if (!isset($_SESSION['email'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Page</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .query-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .query-box h2 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .query-box pre {
+            background: white;
+            color: #d00;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f00;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .warning {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body style="background: #fff;">
@@ -23,8 +80,49 @@ if (!isset($_SESSION['email'])) {
         <h1>Welcome,<span><?= $_SESSION['name']; ?></span></h1>
         <p>This is an <span>user </span>page</p>
         <button onclick="window.location.href='logout.php'">Logout</button>
+
+        <!-- Hien thi SQL -->
+        <?php if (isset($_SESSION['query_display'])): ?>
+            <div class="query-box">
+                <div class="warning">
+                    ⚠️ <strong>Debug Mode:</strong> Query này chỉ hiển thị để demo SQL Injection.
+                </div>
+                <h2>📝 SQL Query Used:</h2>
+                <pre><?php echo ($_SESSION['query_display']); ?></pre>
+            </div>
+        <?php
+            // Xóa query display sau khi hiển thị
+            unset($_SESSION['query_display']);
+        endif;
+        ?>
+        <!-- Hien thi SQL -->
+        <h2>Result</h2>
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+
+            <?php if ($result && $result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['name']); ?></td>
+                        <td><?= htmlspecialchars($row['email']); ?></td>
+                        <td><?= htmlspecialchars($row['role']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="3">No users found</td>
+                </tr>
+            <?php endif; ?>
+        </table>
+
     </div>
+
     <div id="toast-container" class="toast-container"></div>
+
     <script>
         function createToast(msg, timeout) {
             timeout = timeout || 3000;

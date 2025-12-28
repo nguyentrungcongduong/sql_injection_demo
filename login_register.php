@@ -19,16 +19,58 @@ if (isset($_POST['register'])) {
     exit();
 }
 
+// if (isset($_POST['login'])) {
+//     $name = $_POST['name'] ?? '';
+//     $password = $_POST['password'] ?? '';
+
+//     $result = $conn->query("SELECT * FROM users WHERE name = '$name'");
+
+//    // ✅ Tạo query display (CHỈ ĐỂ DEBUG)
+//     $query_display = "SELECT * FROM users WHERE name = '" . htmlspecialchars($name) . "'";
+//      // Lưu vào session để hiển thị ở user_page.php
+//     $_SESSION['query_display'] = $query_display;
+    
+//     if ($result && $result->num_rows > 0) {
+//         $user = $result->fetch_assoc();
+//         if (password_verify($password, $user['password'])) {
+//             $_SESSION['name'] = $user['name'];
+//             $_SESSION['email'] = $user['email'];
+//             $_SESSION['success'] = 'Đăng nhập thành công';
+
+//             if ($user['role'] === 'admin') {
+//                 header("Location: admin_page.php");
+//             } else {
+//                 header("Location: user_page.php");
+//             }
+//             exit();
+//         }
+//     }
+
+//     $_SESSION['login_error'] = 'Incorrect name or password';
+//     $_SESSION['active_form'] = 'login';
+//     header("Location: index.php");
+//     exit();
+// }
+
+
+///Bypass login for demo purpose
 if (isset($_POST['login'])) {
     $name = $_POST['name'] ?? '';
     $password = $_POST['password'] ?? '';
 
     $result = $conn->query("SELECT * FROM users WHERE name = '$name'");
+    $_SESSION['query_display'] = "SELECT * FROM users WHERE name = '" . htmlspecialchars($name) . "'";
+    
     if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
+        
+        // ✅ BYPASS: Nếu query trả về > 1 user (dấu hiệu SQL Injection) → bypass password
+        // Hoặc nếu password đúng → vào bình thường
+        if ($result->num_rows > 1 || password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
             $_SESSION['name'] = $user['name'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['success'] = 'Đăng nhập thành công';
 
             if ($user['role'] === 'admin') {

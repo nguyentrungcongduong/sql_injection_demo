@@ -40,7 +40,7 @@ function isActiveForm($formName, $activeForm)
             <form action="login_register.php" method="post">
                 <h2>Login</h2>
                 <?= showError($errors['login']); ?>
-                <input type="text" name="name" placeholder="Name">
+                <input id="form_input_username" type="text" name="name" placeholder="Name">
                 <input type="password" name="password" placeholder="Password">
                 <button type="submit" name="login">Login</button>
                 <p>Don't have an account? <a href="#" onclick="showForm('register-form')">Register</a></p>
